@@ -15,22 +15,33 @@ object Sequences: // Essentially, generic linkedlists
       case Cons(h, t) => h + sum(t)
       case _          => 0
 
-    def map[A, B](l: Sequence[A])(mapper: A => B): Sequence[B] = l match
-      case Cons(h, t) => Cons(mapper(h), map(t)(mapper))
-      case Nil()      => Nil()
+    def map[A, B](l: Sequence[A])(mapper: A => B): Sequence[B] = 
+      flatMap(l)(a => Cons(mapper(a), Nil()))
 
-    def filter[A](l1: Sequence[A])(pred: A => Boolean): Sequence[A] = l1 match
-      case Cons(h, t) if pred(h) => Cons(h, filter(t)(pred))
-      case Cons(_, t)            => filter(t)(pred)
-      case Nil()                 => Nil()
+    def filter[A](l1: Sequence[A])(pred: A => Boolean): Sequence[A] =
+      flatMap(l1)(a => a match
+        case i if pred(i) => Cons(i, Nil())
+        case _            => Nil()
+      )
 
     // Lab 03
-    def zip[A, B](first: Sequence[A], second: Sequence[B]): Sequence[(A, B)] = ???
+    def zip[A, B](first: Sequence[A], second: Sequence[B]): Sequence[(A, B)] = (first, second) match
+      case (Nil(), _)                   => Nil()
+      case (_, Nil())                   => Nil()
+      case (Cons(fh, ft), Cons(sh, st)) => Cons((fh, sh), zip(ft, st))
 
-    def take[A](l: Sequence[A])(n: Int): Sequence[A] = ???
+    def take[A](l: Sequence[A])(n: Int): Sequence[A] = (l, n) match
+      case (_, i) if i <= 0 => Nil()
+      case (Nil(), _)       => Nil()
+      case (Cons(h, t), i)  => Cons(h, take(t)(i-1))
     
-    def concat[A](l1: Sequence[A], l2: Sequence[A]): Sequence[A] = ???
-    def flatMap[A, B](l: Sequence[A])(mapper: A => Sequence[B]): Sequence[B] = ???
+    def concat[A](l1: Sequence[A], l2: Sequence[A]): Sequence[A] = l1 match
+      case Nil()      => l2
+      case Cons(h, t) => Cons(h, concat(t, l2))
+    
+    def flatMap[A, B](l: Sequence[A])(mapper: A => Sequence[B]): Sequence[B] = l match
+      case Nil()      => Nil()
+      case Cons(h, t) => concat(mapper(h), flatMap(t)(mapper))
 
     def min(l: Sequence[Int]): Optional[Int] = ???
     

@@ -3,6 +3,8 @@ package u03
 import Optionals.Optional.*
 import org.junit.*
 import org.junit.Assert.*
+import u02.Modules.Person
+import u02.Modules.Person.*
 
 class SequenceTest:
   import u03.Sequences.*
@@ -48,3 +50,12 @@ class SequenceTest:
     assertEquals(Just(10), min(l))
     assertEquals(Just(1), min(Cons(1, Nil())))
     assertEquals(Empty(), min(Nil()))
+  @Test def testCoursesOfTeachers() =
+    val people: Sequence[Person] = Cons(Student("Aldo", 2020),
+      Cons(Teacher("Bob", "LCMC"),
+        Cons(Teacher("Carl", "Automazione"),
+          Cons(Teacher("Dan", "Musica Medievale"), Nil()))))
+    assertEquals(Cons("LCMC", Cons("Automazione", Cons("Musica Medievale", Nil()))), coursesOfTeachers(people))
+
+  @Test def testFoldLeft() =
+    assertEquals(-60, foldLeft(l)(0)(_ - _))

@@ -1,6 +1,7 @@
 package u03
 
 import u02.AnonymousFunctions.l
+import u02.Modules.Person
 import u03.Optionals.Optional
 
 object Sequences: // Essentially, generic linkedlists
@@ -50,7 +51,17 @@ object Sequences: // Essentially, generic linkedlists
           case Optional.Empty()           => Optional.Just(h)
           case Optional.Just(v) if h < v  => Optional.Just(h)
           case Optional.Just(v)           => Optional.Just(v)
-    
+    def coursesOfTeachers(l: Sequence[Person]): Sequence[String] =
+      flatMap(l)(l => l match
+        case Person.Teacher(_, c) => Cons(c, Nil())
+        case _ => Nil()
+      )
+
+    def foldLeft[A](l: Sequence[A])(initial: A)(operator: (A, A) => A): A = l match
+      case Nil() => initial
+      case Cons(h, t) => foldLeft(t)(operator(initial, h))(operator)
+
+
 @main def trySequences =
   import Sequences.* 
   val l = Sequence.Cons(10, Sequence.Cons(20, Sequence.Cons(30, Sequence.Nil())))

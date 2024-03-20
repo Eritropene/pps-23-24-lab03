@@ -46,7 +46,15 @@ object Streams extends App :
     // Task 7
     def fill[A](size: Int)(value: A): Stream[A] =
       take(iterate(value)(_ => value))(size)
-      
+
+    // Task 8
+    def pell(): Stream[Int] =
+      def buildPell(a: Int, b: Int): Stream[Int] =
+        val value = 2*b + a
+        cons(value, buildPell(b, value))
+      cons(0, cons(1, buildPell(0, 1)))
+
+
   end Stream
 
 @main def tryStreams =
